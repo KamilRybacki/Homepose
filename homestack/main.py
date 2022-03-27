@@ -39,12 +39,6 @@ class HomestackInstance():
         self.logging.info('Configuring and enabling DNSMasq')
         self.networking.configure_dns()
         self.networking.broadcast_gateways(self.deployment.enviroment.get_enabled_services())
-        # target_reverse_proxy_file_path = f'{os.environ["RPROXY_MOUNT_POINT"]}/nginx.conf'
-        # with open(target_reverse_proxy_file_path, 'w') as rproxy_conf:
-        #     rproxy_conf.write(self.networking.create_reverse_proxy_file(
-        #         self.enviroment.get_enabled_services(),
-        #         self._homestack_full_hostname
-        #     ))
 
     def stop(self):
         self.logging.info(' Decomposing running services')
