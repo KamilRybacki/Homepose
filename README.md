@@ -1,8 +1,6 @@
 ![Homestack](/assets/logo.png)
 
-<sub><sup>Yeah, it's that pop-culture reference</sup></sub>
-
-# HomeStack
+# HomeStack <sub><sup>Yeah, it's that pop-culture reference</sup></sub>
 
 In general terms, HomeStack is a Python module, which provides an interface
 to quickly deploy Dockerized application using previously prepared
