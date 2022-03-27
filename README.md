@@ -1,3 +1,5 @@
+![Homestack](/assets/logo.png)
+
 # HomeStack
 
 In general terms, HomeStack is a Python module, which provides an interface
