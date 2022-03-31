@@ -2,24 +2,24 @@
 
 import dataclasses
 
-import homestack.libs.deployment
-import homestack.libs.networking
-import homestack.libs.utils
+import homepose.libs.deployment
+import homepose.libs.networking
+import homepose.libs.utils
 
 @dataclasses.dataclass
 class HomestackInstance():
-    enviroment: homestack.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homestack.libs.enviroment.HomestackDeployEnviroment)
-    networking: homestack.libs.networking.HomestackNetworking = dataclasses.field(init=False, default_factory=homestack.libs.networking.HomestackNetworking)
-    deployment: homestack.libs.deployment.HomestackDeployment = dataclasses.field(init=False, default_factory=homestack.libs.deployment.HomestackDeployment)
-    logging: homestack.libs.utils.HomestackLogger = dataclasses.field(init=False)
+    enviroment: homepose.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomestackDeployEnviroment)
+    networking: homepose.libs.networking.HomestackNetworking = dataclasses.field(init=False, default_factory=homepose.libs.networking.HomestackNetworking)
+    deployment: homepose.libs.deployment.HomestackDeployment = dataclasses.field(init=False, default_factory=homepose.libs.deployment.HomestackDeployment)
+    logging: homepose.libs.utils.HomestackLogger = dataclasses.field(init=False)
 
     _currently_enabled_services: list = dataclasses.field(init=False, default_factory=list)
-    _homestack_full_hostname: str = dataclasses.field(init=False, default='')
+    _homepose_full_hostname: str = dataclasses.field(init=False, default='')
 
     __REVERSE_PROXY_SERVICE_NAME: str = 'rproxy'
 
     def __post_init__(self):
-        self.logging = homestack.libs.utils.HomestackLogger()
+        self.logging = homepose.libs.utils.HomestackLogger()
         self._all_services = [
             self.enviroment['DATABASE_BACKEND'],
             *self.enviroment.get_enabled_services(),
@@ -47,7 +47,7 @@ class HomestackInstance():
         self.stop()
         self.logging.info('Restarting docker network')
         self.deployment.restart_docker_network(
-            self.enviroment['HOMESTACK_DOCKER_NETWORK']
+            self.enviroment['HOMEPOSE_DOCKER_NETWORK']
         )
         self.logging.info('Starting enabled Docker services')
         self.start()

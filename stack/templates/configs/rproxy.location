@@ -1,0 +1,3 @@
+			location ~ ^/[SERVICE_NAME](/.*)?$ {
+				proxy_pass         http://192.168.0.143:[SERVICE_PORT]$1$is_args$args;
+			}

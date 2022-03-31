@@ -12,14 +12,14 @@ import typing
 
 import docker
 
-import homestack.libs.vars
-import homestack.libs.enviroment
-import homestack.libs.utils
+import homepose.libs.vars
+import homepose.libs.enviroment
+import homepose.libs.utils
 
 
 @dataclasses.dataclass
 class HomestackDeployment():
-    enviroment: homestack.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homestack.libs.enviroment.HomestackDeployEnviroment)
+    enviroment: homepose.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomestackDeployEnviroment)
     __logger: typing.Optional[str] = dataclasses.field(init=False, default=None)
     __instance: docker.client.DockerClient = dataclasses.field(default_factory=docker.from_env)
     __current_service_name: str = dataclasses.field(init=False, default='')
@@ -40,7 +40,7 @@ class HomestackDeployment():
 
     def compose_services(self, services_list: list, logger: logging.Logger = None):
         self.__logger = logging.Logger('COMPOSE') if not logger else logger
-        homestack.libs.utils.fill_templates(
+        homepose.libs.utils.fill_templates(
             self.enviroment["TEMPLATES_FOLDER"],
             self.enviroment["GENERATED_FOLDER"]
         )
@@ -89,7 +89,7 @@ class HomestackDeployment():
         dockerfile_template_path = f'{self.enviroment["TEMPLATES_FOLDER"]}/dockerfiles/{self.__current_service_name}'
         if os.path.exists(dockerfile_template_path):
             dockerfile_target_path = f'{self.__service_compose_path}/Dockerfile' 
-            filled_dockerfile_template = homestack.libs.utils.generate_dockerfile(dockerfile_template_path)
+            filled_dockerfile_template = homepose.libs.utils.generate_dockerfile(dockerfile_template_path)
             with open(dockerfile_target_path, 'w') as target_dockerfile:
                 target_dockerfile.truncate(0)
                 target_dockerfile.write(filled_dockerfile_template)

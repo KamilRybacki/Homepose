@@ -1,6 +1,6 @@
 import setuptools
 
-MODULE_NAME='homestack'
+MODULE_NAME='homepose'
 
 packages_list = [MODULE_NAME] + [
     f'{MODULE_NAME}.{package_name}' 

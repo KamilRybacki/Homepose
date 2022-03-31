@@ -6,7 +6,7 @@ import typing
 
 import configparser
 
-import homestack.libs.vars
+import homepose.libs.vars
 
 class DeployConfigEmpty(Exception):
     default_message = 'Configuration is empty! Check your .ini file.' 
@@ -22,10 +22,10 @@ class NonSudoCall(Exception):
 
 @dataclasses.dataclass
 class HomestackDeployEnviroment():
-    config_file_path: str = dataclasses.field(default=homestack.libs.vars.DEFAULT_CONFIG_FILE_PATH)
-    www_data_username: str = dataclasses.field(default=homestack.libs.vars.DEFAULT_WWW_DATA_USER)
-    www_data_userid: int = dataclasses.field(default=homestack.libs.vars.DEFAULT_WWW_DATA_USERID)
-    www_data_groupid: int = dataclasses.field(default=homestack.libs.vars.DEFAULT_WWW_DATA_GROUPID)
+    config_file_path: str = dataclasses.field(default=homepose.libs.vars.DEFAULT_CONFIG_FILE_PATH)
+    www_data_username: str = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USER)
+    www_data_userid: int = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USERID)
+    www_data_groupid: int = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_GROUPID)
 
     config: typing.Optional[dict] = dataclasses.field(init=False, default=None)
     __instance: dict = dataclasses.field(init=False, default_factory=dict)

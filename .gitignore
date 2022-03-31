@@ -1,0 +1,6 @@
+# Don't upload generated configs~
+stack/generated/
+**/Dockerfile
+!stack/docker/gitea/Dockerfile
+**/docker/**/*.log
+**/docker/**/.env

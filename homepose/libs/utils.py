@@ -9,7 +9,7 @@ import typing
 class HomestackLogger():
     formatting: str = dataclasses.field(default=' %(name)s :: %(levelname)s :: %(message)s')
     level: int = dataclasses.field(default=logging.INFO)
-    name: str = dataclasses.field(default='HOMESTACK-SETUP')
+    name: str = dataclasses.field(default='HOMEPOSE-SETUP')
     __logger: typing.Optional[logging.Logger] = dataclasses.field(init=False, default=None)
     __instance: dict = dataclasses.field(init=False, default_factory=dict)
 

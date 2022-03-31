@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  nextcloudredis:
+    image: redis
+    container_name: redis
+    hostname: redis
+    restart: always
+    networks:
+      - shared-network
+networks:
+  shared-network:
+    external: true
+    name: ${HOMEPOSE_DOCKER_NETWORK}

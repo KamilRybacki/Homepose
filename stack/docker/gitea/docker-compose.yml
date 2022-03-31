@@ -1,0 +1,47 @@
+version: "3.7"
+services:
+  gitea:
+    image: custom-gitea:latest
+    container_name: gitea 
+    environment:
+      - VIRTUAL_HOST=gitea.${HOMEPOSE_DOMAIN}.lan
+      - LETSENCRYPT_HOST=gitea.${HOMEPOSE_DOMAIN}.lan
+      - VIRTUAL_PORT=3000
+      - USER_UID=1000
+      - USER_GID=1000
+      - APP_NAME=${GITEA_APP_NAME}
+      - ROOT_URL=http://${HOMEPOSE_IP_ADDRESS}:${GITEA_PORT}
+      # Paths to directories for storing persistent data
+      - GITEA__lfs__PATH=/lfs
+      - GITEA__picture__AVATAR_UPLOAD_PATH=/avatars/users
+      - GITEA__picture__REPOSITORY_AVATAR_UPLOAD_PATH=/avatars/repos
+      - GITEA__repository__ROOT=/repos
+      - GITEA__picture__AVATAR_MAX_FILE_SIZE=5242880
+      # Postgres authentication info
+      - GITEA__database__TYPE=postgres
+      - GITEA__database__HOST=postgres:${POSTGRES_PORT}
+      - GITEA__database__NAME=${GITEA_DATABASE_NAME}
+      - GITEA__database__USER=${POSTGRES_USERNAME}
+      - GITEA__database__PASSWD=${POSTGRES_PASSWORD}
+      # Bypass initial installation
+      - GITEA__security__SECRET_KEY=${GITEA_SECRET}
+      - GITEA__security__INSTALL_LOCK=true
+      # Misc settings
+      - GITEA__ui__DEFAULT_THEME=arc-green
+      - GITEA__ui__DEFAULT_SHOW_FULL_NAME=true
+    restart: always
+    volumes:
+      - ${GITEA_MAIN_MOUNT_POINT}:/data
+      - ${GITEA_USER_AVATARS_MOUNT_POINT}:/avatars/users
+      - ${GITEA_REPOS_AVATARS_MOUNT_POINT}:/avatars/repos
+      - ${GITEA_REPOS_MOUNT_POINT}:/repos
+      - ${GITEA_LFS_MOUNT_POINT}:/lfs
+    ports:
+      - ${GITEA_PORT}:3000
+      - ${HOMEPOSE_SSH_PORT}:22
+    networks:
+      - shared-network
+networks:
+  shared-network:
+    external: true
+    name: ${HOMEPOSE_DOCKER_NETWORK}

@@ -4,8 +4,8 @@ import logging
 import os
 import shutil
 
-import homestack.libs.enviroment
-import homestack.libs.utils
+import homepose.libs.enviroment
+import homepose.libs.utils
 
 
 class DNSMasqInstallError(Exception):
@@ -16,7 +16,7 @@ class DNSMasqInstallError(Exception):
 
 @dataclasses.dataclass
 class HomestackNetworking():
-    enviroment: homestack.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homestack.libs.enviroment.HomestackDeployEnviroment)
+    enviroment: homepose.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomestackDeployEnviroment)
     host_ip_address: str = dataclasses.field(init=False, default='')
 
     __additional_gateways: dict = dataclasses.field(init=False, default_factory=dict)
@@ -24,13 +24,13 @@ class HomestackNetworking():
     __reverse_proxy_location_template: str = dataclasses.field(init=False, default='')
     
     def __post_init__(self):
-        for line in os.popen('ip a show ${HOMESTACK_ETHERNET_INTERFACE}').readlines():
+        for line in os.popen('ip a show ${HOMEPOSE_ETHERNET_INTERFACE}').readlines():
             if 'inet ' and 'scope global dynamic' in line:
                 self.host_ip_address = line.strip()[5:line.find('/')-4]
-                os.environ.setdefault('HOMESTACK_IP_ADDRESS', self.host_ip_address)
+                os.environ.setdefault('HOMEPOSE_IP_ADDRESS', self.host_ip_address)
                 os.environ.setdefault('HOSTNAME', os.popen('hostname').read().rstrip())
                 break
-        with open(homestack.libs.vars.HOSTS_TARGET_FILE_PATH, 'r') as current_hosts_file: 
+        with open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'r') as current_hosts_file: 
             self.__hosts_file_contents = current_hosts_file.read()
         with open(f'{self.enviroment["TEMPLATES_FOLDER"]}/configs/rproxy.location', 'r') as rproxy_location_template: 
             self.__reverse_proxy_location_template = rproxy_location_template.read()
@@ -39,7 +39,7 @@ class HomestackNetworking():
         dnsmasq_install_result = os.popen('yes | apt-get install avahi-daemon').readlines()
         if 'E:' in dnsmasq_install_result[-1]:
             raise DNSMasqInstallError()
-        shutil.copyfile(f'{self.enviroment["GENERATED_FOLDER"]}/configs/dnsmasq.conf', homestack.libs.vars.DNSMASQ_CONF_TARGET_FILE_PATH)
+        shutil.copyfile(f'{self.enviroment["GENERATED_FOLDER"]}/configs/dnsmasq.conf', homepose.libs.vars.DNSMASQ_CONF_TARGET_FILE_PATH)
         os.system('systemctl restart dnsmasq.service')
 
     def add_gateway(self, address: str, name: str):
@@ -60,7 +60,7 @@ class HomestackNetworking():
             if entry not in self.__hosts_file_contents:
                 new_hosts_file_contents += entry
         
-        current_hosts_file = open(homestack.libs.vars.HOSTS_TARGET_FILE_PATH, 'w')
+        current_hosts_file = open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'w')
         current_hosts_file.truncate(0)
         current_hosts_file.write(new_hosts_file_contents)
         current_hosts_file.close()

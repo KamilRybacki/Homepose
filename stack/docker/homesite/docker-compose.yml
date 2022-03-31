@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+ nginx:
+    image: nginx:latest
+    container_name: homesite
+    environment:
+      - VIRTUAL_HOST=site.${HOMEPOSE_DOMAIN}.lan
+      - LETSENCRYPT_HOST=site.${HOMEPOSE_DOMAIN}.lan
+      - VIRTUAL_PORT=80
+    volumes:
+      - ${HOMESITE_MOUNT_POINT}:/etc/nginx
+    ports:
+      - ${HOMESITE_PORT}:80
+    networks:
+      - shared-network
+networks:
+  shared-network:
+    external: true
+    name: ${HOMEPOSE_DOCKER_NETWORK}
