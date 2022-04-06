@@ -7,11 +7,11 @@ import homepose.libs.networking
 import homepose.libs.utils
 
 @dataclasses.dataclass
-class HomestackInstance():
-    enviroment: homepose.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomestackDeployEnviroment)
-    networking: homepose.libs.networking.HomestackNetworking = dataclasses.field(init=False, default_factory=homepose.libs.networking.HomestackNetworking)
-    deployment: homepose.libs.deployment.HomestackDeployment = dataclasses.field(init=False, default_factory=homepose.libs.deployment.HomestackDeployment)
-    logging: homepose.libs.utils.HomestackLogger = dataclasses.field(init=False)
+class HomeposeInstance():
+    enviroment: homepose.libs.enviroment.HomeposeDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnviroment)
+    networking: homepose.libs.networking.HomeposeNetworking = dataclasses.field(init=False, default_factory=homepose.libs.networking.HomeposeNetworking)
+    deployment: homepose.libs.deployment.HomeposeDeployment = dataclasses.field(init=False, default_factory=homepose.libs.deployment.HomeposeDeployment)
+    logging: homepose.libs.utils.HomeposeLogger = dataclasses.field(init=False)
 
     _currently_enabled_services: list = dataclasses.field(init=False, default_factory=list)
     _homepose_full_hostname: str = dataclasses.field(init=False, default='')
@@ -19,7 +19,7 @@ class HomestackInstance():
     __REVERSE_PROXY_SERVICE_NAME: str = 'rproxy'
 
     def __post_init__(self):
-        self.logging = homepose.libs.utils.HomestackLogger()
+        self.logging = homepose.libs.utils.HomeposeLogger()
         self._all_services = [
             self.enviroment['DATABASE_BACKEND'],
             *self.enviroment.get_enabled_services(),

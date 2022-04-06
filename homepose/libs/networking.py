@@ -15,8 +15,8 @@ class DNSMasqInstallError(Exception):
 
 
 @dataclasses.dataclass
-class HomestackNetworking():
-    enviroment: homepose.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomestackDeployEnviroment)
+class HomeposeNetworking():
+    enviroment: homepose.libs.enviroment.HomeposeDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnviroment)
     host_ip_address: str = dataclasses.field(init=False, default='')
 
     __additional_gateways: dict = dataclasses.field(init=False, default_factory=dict)

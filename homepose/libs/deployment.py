@@ -18,8 +18,8 @@ import homepose.libs.utils
 
 
 @dataclasses.dataclass
-class HomestackDeployment():
-    enviroment: homepose.libs.enviroment.HomestackDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomestackDeployEnviroment)
+class HomeposeDeployment():
+    enviroment: homepose.libs.enviroment.HomeposeDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnviroment)
     __logger: typing.Optional[str] = dataclasses.field(init=False, default=None)
     __instance: docker.client.DockerClient = dataclasses.field(default_factory=docker.from_env)
     __current_service_name: str = dataclasses.field(init=False, default='')

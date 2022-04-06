@@ -118,7 +118,7 @@ its composing of a service? An example of such operation would be filesystem man
 Docker volumes i.e. modification of config files or changing permissions on chosen directories.
 
 This can be done by creating `pre_init.sh` and `post_init.sh` Bash scripts, which are automagically
-run by Homestack just before building of custom Dockerfiles. Wait, custom Dockerfiles?
+run by Homepose just before building of custom Dockerfiles. Wait, custom Dockerfiles?
 
 Yeah, HomePose checks if an app setup files directory contains a file named ... `Dockerfile`
 and automatically build image defined there. This can be done manually or

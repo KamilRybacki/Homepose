@@ -6,7 +6,7 @@ import typing
 
 
 @dataclasses.dataclass
-class HomestackLogger():
+class HomeposeLogger():
     formatting: str = dataclasses.field(default=' %(name)s :: %(levelname)s :: %(message)s')
     level: int = dataclasses.field(default=logging.INFO)
     name: str = dataclasses.field(default='HOMEPOSE-SETUP')
@@ -14,11 +14,11 @@ class HomestackLogger():
     __instance: dict = dataclasses.field(init=False, default_factory=dict)
 
     def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, '_HomestackLogger__instance'):
+        if not hasattr(cls, '_HomeposeLogger__instance'):
             cls.__instance = {}
         if cls not in cls.__instance:
             logging.basicConfig()
-            new_instance = super(HomestackLogger, cls).__new__(cls, *args, **kwargs)
+            new_instance = super(HomeposeLogger, cls).__new__(cls, *args, **kwargs)
             new_instance.__logger = cls.__init_logger()
             cls.__instance[cls] = new_instance
         return cls.__instance[cls]

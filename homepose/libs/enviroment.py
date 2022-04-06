@@ -21,7 +21,7 @@ class NonSudoCall(Exception):
 
 
 @dataclasses.dataclass
-class HomestackDeployEnviroment():
+class HomeposeDeployEnviroment():
     config_file_path: str = dataclasses.field(default=homepose.libs.vars.DEFAULT_CONFIG_FILE_PATH)
     www_data_username: str = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USER)
     www_data_userid: int = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USERID)
@@ -33,10 +33,10 @@ class HomestackDeployEnviroment():
     def __new__(cls, *args, **kwargs):
         if not os.geteuid() == 0:
             raise NonSudoCall()
-        if not hasattr(cls, '_HomestackDeployEnviroment__instance'):
+        if not hasattr(cls, '_HomeposeDeployEnviroment__instance'):
             cls.__instance = {}
         if cls not in cls.__instance:
-            new_instance = super(HomestackDeployEnviroment, cls).__new__(cls, *args, **kwargs)
+            new_instance = super(HomeposeDeployEnviroment, cls).__new__(cls, *args, **kwargs)
             new_instance.config = cls.parse_config_file(cls.config_file_path)
             new_instance.export_config()
             cls.__instance[cls] = new_instance
