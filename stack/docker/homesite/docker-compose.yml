@@ -4,8 +4,8 @@ services:
     image: nginx:latest
     container_name: homesite
     environment:
-      - VIRTUAL_HOST=site.${HOMEPOSE_DOMAIN}.lan
-      - LETSENCRYPT_HOST=site.${HOMEPOSE_DOMAIN}.lan
+      - VIRTUAL_HOST=site.${HOMEPOSE_HOSTNAME}.${HOMEPOSE_DOMAIN}
+      - LETSENCRYPT_HOST=site.${HOMEPOSE_HOSTNAME}.${HOMEPOSE_DOMAIN}
       - VIRTUAL_PORT=80
     volumes:
       - ${HOMESITE_MOUNT_POINT}:/etc/nginx

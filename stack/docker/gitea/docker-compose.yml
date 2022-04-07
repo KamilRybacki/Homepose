@@ -4,8 +4,8 @@ services:
     image: custom-gitea:latest
     container_name: gitea 
     environment:
-      - VIRTUAL_HOST=gitea.${HOMEPOSE_DOMAIN}.lan
-      - LETSENCRYPT_HOST=gitea.${HOMEPOSE_DOMAIN}.lan
+      - VIRTUAL_HOST=gitea.${HOMEPOSE_HOSTNAME}.${HOMEPOSE_DOMAIN}
+      - LETSENCRYPT_HOST=gitea.${HOMEPOSE_HOSTNAME}.${HOMEPOSE_DOMAIN}
       - VIRTUAL_PORT=3000
       - USER_UID=1000
       - USER_GID=1000
