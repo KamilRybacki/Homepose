@@ -1,4 +1,4 @@
-![HomePose logo](Logo.png)
+![HomePose logo](homepose.png)
 
 # HomePose
 
