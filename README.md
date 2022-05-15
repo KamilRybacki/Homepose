@@ -1,4 +1,4 @@
-![HomePose logo](homepose.png)
+![HomePose logo](https://i.ibb.co/F4qdQ3p/Logo-square-2x.png)
 
 # HomePose
 
