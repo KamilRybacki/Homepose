@@ -34,7 +34,7 @@ class HomeposeDeployment():
             network.remove()
         self.__instance.networks.create(network_name)
 
-    def compose_services(self, services_list: list, logger: logging.Logger = logging.Logger('COMPOSE')) -> None:
+    def compose_services(self, services_list: list, logger: homepose.libs.utils.HomeposeLogger) -> None:
         self.__logger = logger
         homepose.libs.utils.fill_templates(
             self.enviroment["TEMPLATES_FOLDER"],

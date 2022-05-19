@@ -61,13 +61,12 @@ class HomeposeDeployEnvironment():
 
     def setup_www_data_user(self) -> None:
         with open(os.devnull, 'w', encoding='utf-8') as file_pointer:
-            popen_kwargs = {'stdout': file_pointer, 'stderr': file_pointer, 'shell': True}
             for command in [
                 f'useradd -u {self.www_data_userid} {self.www_data_username}',
                 f'groupadd -g {self.www_data_groupid} {self.www_data_username}',
                 f'usermod -a -G {self.www_data_username} {self.www_data_username}'
             ]:
-                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R1732 # type: ignore
+                subprocess.Popen(command, stdout=file_pointer, stderr=file_pointer, shell=True)  # pylint: disable=R1732
             os.environ['WWW_DATA_UID'] = str(self.www_data_userid)
             os.environ['WWW_DATA_GID'] = str(self.www_data_groupid)
 
@@ -95,8 +94,8 @@ class HomeposeDeployEnvironment():
             if '_MOUNT_POINT' in path_name
         ):
             if mount not in persistent_volumes and os.path.exists(mount):
-                uid = os.environ.get('SUDO_UID') | '1000'
-                gid = os.environ.get('SUDO_GID') | '1000'
+                uid = os.environ.get('SUDO_UID') or '1000'
+                gid = os.environ.get('SUDO_GID') or '1000'
                 os.chown(mount, int(uid), int(gid))
                 shutil.rmtree(mount, ignore_errors=True)
 
