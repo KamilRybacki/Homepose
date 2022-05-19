@@ -13,7 +13,7 @@ class HomeposeLogger():
     __logger: typing.Optional[logging.Logger] = dataclasses.field(init=False, default=None)
     __instance: dict = dataclasses.field(init=False, default_factory=dict)
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs) -> 'HomeposeLogger':
         if not hasattr(cls, '_HomeposeLogger__instance'):
             cls.__instance = {}
         if cls not in cls.__instance:
@@ -24,7 +24,7 @@ class HomeposeLogger():
         return cls.__instance[cls]
 
     @classmethod
-    def __init_logger(cls):
+    def __init_logger(cls) -> 'HomeposeLogger':
         logger = logging.getLogger(cls.name)
         logger.setLevel(cls.level)
         logger.propagate = False
@@ -40,23 +40,23 @@ class HomeposeLogger():
         logger.addHandler(console_handler)
         return logger
 
-    def info(self, message: str):
+    def info(self, message: str) -> None:
         self.log(message, logging.INFO)
 
-    def error(self, message: str):
+    def error(self, message: str) -> None:
         self.log(message, logging.ERROR)
     
-    def warning(self, message: str):
+    def warning(self, message: str) -> None:
         self.log(message, logging.WARNING)
 
-    def debug(self, message: str):
+    def debug(self, message: str) -> None:
         self.log(message, logging.DEBUG)
 
-    def log(self, message: str, level: int):
+    def log(self, message: str, level: int) -> None:
         self.__logger.log(level, message)
 
 
-def fill_templates(templates_path: str, generated_path: str):
+def fill_templates(templates_path: str, generated_path: str) -> None
     for subfolder in os.listdir(templates_path):
         for filename in os.listdir(f'{templates_path}/{subfolder}'):
             with open(f'{templates_path}/{subfolder}/{filename}', 'r') as template:
@@ -67,7 +67,7 @@ def fill_templates(templates_path: str, generated_path: str):
             shutil.chown(f'{generated_path}/{subfolder}/{filename}', user=os.environ['SUDO_USER'], group=os.environ['SUDO_USER'])
 
 
-def fill_template(template_contents: str):
+def fill_template(template_contents: str) -> str:
     for variable_name, variable_value in os.environ.items():
         entry_template_marker = f'[{variable_name}]'
         if entry_template_marker in template_contents:
@@ -75,8 +75,6 @@ def fill_template(template_contents: str):
     return template_contents
 
 
-def generate_dockerfile(template_path: str):
-    service_name = template_path.split('/')[-1]
+def generate_dockerfile(template_path: str) -> str:
     with open(template_path, 'r') as dockerfile_template:
         return fill_template(dockerfile_template.read())
-    return ''

@@ -21,7 +21,7 @@ class NonSudoCall(Exception):
 
 
 @dataclasses.dataclass
-class HomeposeDeployEnviroment():
+class HomeposeDeployEnvironment():
     config_file_path: str = dataclasses.field(default=homepose.libs.vars.DEFAULT_CONFIG_FILE_PATH)
     www_data_username: str = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USER)
     www_data_userid: int = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USERID)
@@ -30,13 +30,13 @@ class HomeposeDeployEnviroment():
     config: typing.Optional[dict] = dataclasses.field(init=False, default=None)
     __instance: dict = dataclasses.field(init=False, default_factory=dict)
 
-    def __new__(cls, *args, **kwargs):
-        if not os.geteuid() == 0:
+    def __new__(cls, *args, **kwargs) -> 'HomeposeDeployEnvironment':
+        if os.geteuid() != 0:
             raise NonSudoCall()
-        if not hasattr(cls, '_HomeposeDeployEnviroment__instance'):
+        if not hasattr(cls, '_HomeposeDeployEnvironment__instance'):
             cls.__instance = {}
         if cls not in cls.__instance:
-            new_instance = super(HomeposeDeployEnviroment, cls).__new__(cls, *args, **kwargs)
+            new_instance = super(HomeposeDeployEnvironment, cls).__new__(cls, *args, **kwargs)
             new_instance.config = cls.parse_config_file(cls.config_file_path)
             new_instance.export_config()
             cls.__instance[cls] = new_instance
@@ -109,7 +109,7 @@ class HomeposeDeployEnviroment():
                 os.chown(mount, int(os.environ.get('SUDO_UID')), int(os.environ.get('SUDO_GID')))
                 shutil.rmtree(mount, ignore_errors=True)
     
-    def get_enabled_services(self):
+    def get_enabled_services(self) -> list:
         if enabled_services := self.config.get('ENABLED_SERVICES'): 
             return enabled_services.split(',')
         return []

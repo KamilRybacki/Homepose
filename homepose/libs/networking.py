@@ -16,7 +16,7 @@ class DNSMasqInstallError(Exception):
 
 @dataclasses.dataclass
 class HomeposeNetworking():
-    enviroment: homepose.libs.enviroment.HomeposeDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnviroment)
+    enviroment: homepose.libs.enviroment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnvironment)
     host_ip_address: str = dataclasses.field(init=False, default='')
 
     __additional_gateways: dict = dataclasses.field(init=False, default_factory=dict)
@@ -54,13 +54,12 @@ class HomeposeNetworking():
             f'{self.host_ip_address} {service_name}\n'
             for service_name in services_list
         ]
-        
+
         new_hosts_file_contents = self.__hosts_file_contents
         for entry in gateways_entries:
             if entry not in self.__hosts_file_contents:
                 new_hosts_file_contents += entry
-        
-        current_hosts_file = open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'w')
-        current_hosts_file.truncate(0)
-        current_hosts_file.write(new_hosts_file_contents)
-        current_hosts_file.close()
+
+        with open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'w') as current_hosts_file:
+            current_hosts_file.truncate(0)
+            current_hosts_file.write(new_hosts_file_contents)

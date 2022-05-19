@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import contextlib
 import dataclasses
 import docker
 import dotenv
@@ -7,7 +8,6 @@ import logging
 import os
 import shutil
 import subprocess
-import sys
 import typing
 
 import docker
@@ -19,27 +19,25 @@ import homepose.libs.utils
 
 @dataclasses.dataclass
 class HomeposeDeployment():
-    enviroment: homepose.libs.enviroment.HomeposeDeployEnviroment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnviroment)
+    enviroment: homepose.libs.enviroment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnvironment)
     __logger: typing.Optional[str] = dataclasses.field(init=False, default=None)
     __instance: docker.client.DockerClient = dataclasses.field(default_factory=docker.from_env)
     __current_service_name: str = dataclasses.field(init=False, default='')
     __service_compose_path: str = dataclasses.field(init=False, default='')
 
-    def remove_current_containers(self):
+    def remove_current_containers(self) -> None:
         all_current_containers = self.__instance.containers.list(all=True)
         for container in all_current_containers:
             container.remove(force=True)
 
-    def restart_docker_network(self, network_name: str):
-        try:
+    def restart_docker_network(self, network_name: str) -> None:
+        with contextlib.suppress(docker.errors.NotFound):
             network = self.__instance.networks.get(network_name)
             network.remove()
-        except docker.errors.NotFound:
-            pass
         self.__instance.networks.create(network_name)
 
-    def compose_services(self, services_list: list, logger: logging.Logger = None):
-        self.__logger = logging.Logger('COMPOSE') if not logger else logger
+    def compose_services(self, services_list: list, logger: logging.Logger = None) -> None:
+        self.__logger = logger or logging.Logger('COMPOSE')
         homepose.libs.utils.fill_templates(
             self.enviroment["TEMPLATES_FOLDER"],
             self.enviroment["GENERATED_FOLDER"]
@@ -51,17 +49,18 @@ class HomeposeDeployment():
             self.run_bash_script(f'{self.__service_compose_path}/pre_init.sh')
             if self.compose_up():
                 self.remove_current_containers()
+                network_name = self.enviroment["HOMEPOSE_DOCKER_NETWORK"]
                 network = self.__instance.networks.get(network_name)
                 network.remove()
-                raise Exception(f'Deployment of {service_name} failed!') 
+                raise shutil.ExecError(f'Deployment of {service_name} failed!') 
             self.run_bash_script(f'{self.__service_compose_path}/post_init.sh')
         self.__logger = None
 
-    def run_bash_script(self, script_path: str):
+    def run_bash_script(self, script_path: str) -> None:
         if os.path.exists(script_path):
             self.run_with_popen(f'bash {script_path}', f'{script_path}.log')
     
-    def run_with_popen(self, command: str, logpath: str):
+    def run_with_popen(self, command: str, logpath: str) -> int:
         process = subprocess.Popen(
                     command, 
                     shell=True,
@@ -75,17 +74,17 @@ class HomeposeDeployment():
         ]
         if process.poll():
             return 1
-        if len(process_output) > 0:
+        if process_output:
             with open(logpath, 'w') as script_log:
                 script_log.writelines(process_output)
         return 0
 
-    def compose_up(self, ignore_dockerfile: bool = False):
+    def compose_up(self, ignore_dockerfile: bool = False) -> None:
         self.source_additional_env_vars()
         self.build_docker_image()
         self.compose_currently_selected_service()
 
-    def build_docker_image(self):
+    def build_docker_image(self) -> None:
         dockerfile_template_path = f'{self.enviroment["TEMPLATES_FOLDER"]}/dockerfiles/{self.__current_service_name}'
         if os.path.exists(dockerfile_template_path):
             dockerfile_target_path = f'{self.__service_compose_path}/Dockerfile' 
@@ -95,27 +94,27 @@ class HomeposeDeployment():
                 target_dockerfile.write(filled_dockerfile_template)
         if os.path.exists(f'{self.enviroment["COMPOSE_FILES_FOLDER"]}/{self.__current_service_name}/Dockerfile'):
             self.__logger.info(f'  Found custom Dockerfile for {self.__current_service_name}!')
-            self.__logger.info(f'  Building Docker image ...')
+            self.__logger.info('  Building Docker image ...')
             if self.run_with_popen(
                 f'docker build -t custom-{self.__current_service_name} {self.__service_compose_path}', 
                 f'{self.enviroment["COMPOSE_FILES_FOLDER"]}/{self.__current_service_name}/docker_build.log'
             ):
-                raise Exception('Docker image build failed!')
+                raise shutil.ExecError('Docker image build failed!')
 
-    def source_additional_env_vars(self):
+    def source_additional_env_vars(self) -> None:
         dot_env_file_path = f'{self.__service_compose_path}/.env'
         if os.path.exists(dot_env_file_path):
             self.__logger.info(f'  Sourcing additional enviroment variables for {self.__current_service_name}!')
             dotenv.load_dotenv(dot_env_file_path)
 
-    def compose_currently_selected_service(self):
+    def compose_currently_selected_service(self) -> None:
         if self.__logger:
             self.__logger.info(f'  Composing Docker container for {self.__current_service_name}!')
         docker_compose_file_path = f'{self.__service_compose_path}/docker-compose.yml'
         self.compose_with_file(docker_compose_file_path)
     
     @staticmethod
-    def compose_with_file(filepath: str):
+    def compose_with_file(filepath: str) -> None:
         compose_process = subprocess.Popen(
             f'docker-compose -f {filepath} up -d', 
             shell=True,
@@ -124,9 +123,9 @@ class HomeposeDeployment():
         )
         compose_process_output = [line.decode() for line in compose_process.communicate()]
         if compose_process.poll():
-            raise Exception(f'Deployment of service failed: {compose_process_output}')
+            raise shutil.ExecError(f'Deployment of service failed: {compose_process_output}')
 
-    def compose_down(self):
+    def compose_down(self) -> None:
         docker_compose_file_path = f'{self.__service_compose_path}/docker-compose.yml'
         try:
             process = subprocess.run(
@@ -135,5 +134,5 @@ class HomeposeDeployment():
                 check=True,
                 capture_output=True
             )
-        except subprocess.CalledProcessError:
-            raise Exception('Decomposition halted!')
+        except subprocess.CalledProcessError as e:
+            raise shutil.ExecError('Decomposition halted!') from e
