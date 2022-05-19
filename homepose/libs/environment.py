@@ -67,7 +67,7 @@ class HomeposeDeployEnvironment():
                 f'groupadd -g {self.www_data_groupid} {self.www_data_username}',
                 f'usermod -a -G {self.www_data_username} {self.www_data_username}'
             ]:
-                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R1732  # type: ignore
+                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R1732 # type: ignore
             os.environ['WWW_DATA_UID'] = str(self.www_data_userid)
             os.environ['WWW_DATA_GID'] = str(self.www_data_groupid)
 
@@ -95,7 +95,9 @@ class HomeposeDeployEnvironment():
             if '_MOUNT_POINT' in path_name
         ):
             if mount not in persistent_volumes and os.path.exists(mount):
-                os.chown(mount, int(os.environ.get('SUDO_UID')), int(os.environ.get('SUDO_GID')))
+                uid = os.environ.get('SUDO_UID') | '1000'
+                gid = os.environ.get('SUDO_GID') | '1000'
+                os.chown(mount, int(uid), int(gid))
                 shutil.rmtree(mount, ignore_errors=True)
 
     def get_enabled_services(self) -> list:

@@ -8,7 +8,7 @@ import shutil
 import subprocess
 
 import dotenv
-import docker
+import docker  # type: ignore
 
 import homepose.libs.vars
 import homepose.libs.environment

@@ -12,7 +12,7 @@ class HomeposeLogger():
     _logger: logging.Logger = dataclasses.field(init=False)
     _instance: dict = dataclasses.field(init=False, default_factory=dict)
 
-    def __new__(cls, *args, **kwargs) -> logging.Logger:
+    def __new__(cls, *args, **kwargs) -> 'HomeposeLogger':
         if not hasattr(cls, '_HomeposeLogger__instance'):
             cls._instance = {}
         if cls not in cls._instance:
@@ -23,7 +23,7 @@ class HomeposeLogger():
         return cls._instance[cls]
 
     @classmethod
-    def _init_logger(cls) -> 'HomeposeLogger':
+    def _init_logger(cls) -> logging.Logger:
         logger = logging.getLogger(cls.name)
         logger.setLevel(cls.level)
         logger.propagate = False
