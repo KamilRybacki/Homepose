@@ -1,29 +1,30 @@
 name: Code linting 
-on: [push]
+on:
+ push:
+  paths:
+  - '**.py'
 
 jobs:
-  linting:
+  python-linting:
     runs-on: ubuntu-latest
     steps:
+    - name: Checking out
     - uses: actions/checkout@v1
-    - name: Installing Python3
-      run: sudo apt-get install python3
-    - name: Installing Homepose dependencies
-      run: | 
-        sudo python -m pip install --upgrade pip setuptools wheel
-        sudo pip install -e .
-    - uses: ricardochaves/python-lint@v1.4.0
+    - name: Setting up Python3
+    - uses: actions/setup-python@v3
       with:
-        python-root-list: "homepose homepose.libs"
-        use-pylint: true
-        use-pycodestyle: false
-        use-flake8: true
-        use-black: false
-        use-mypy: true
-        use-isort: false
-        extra-pylint-options: ""
-        extra-pycodestyle-options: ""
-        extra-flake8-options: ""
-        extra-black-options: ""
-        extra-mypy-options: ""
-        extra-isort-options: ""
+        python-version: '3.9'
+        architecture: 'x64'
+    - name: Install Homepose and dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install flake8 pylint mypy
+          pip install .
+    - name: Looking for Python files
+        run: echo "PYFILES=$(git ls-files '*.py')" >> $GITHUB_ENV
+    - name: Checking with Flake8
+        run: flake8 $PYFILES --show-source --statistics
+    - name: Checking with pylint
+        run: pylint $PYFILES
+    - name: Checking typing with mypy
+        run: mypy $PYFILES
