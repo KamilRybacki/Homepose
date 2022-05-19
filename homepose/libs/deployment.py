@@ -6,7 +6,6 @@ import logging
 import os
 import shutil
 import subprocess
-import typing
 
 import dotenv
 import docker
@@ -52,8 +51,8 @@ class HomeposeDeployment():
             self.run_bash_script(f'{self.__service_compose_path}/pre_init.sh')
             try:
                 self.compose_up()
-            except:
-                raise shutil.ExecError(f'Deployment of {service_name} failed!')
+            except Exception as encountered_exception:
+                raise shutil.ExecError(f'Deployment of {service_name} failed!') from encountered_exception
             self.run_bash_script(f'{self.__service_compose_path}/post_init.sh')
 
     def run_bash_script(self, script_path: str) -> None:

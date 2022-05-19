@@ -2,7 +2,6 @@ import dataclasses
 import os
 import shutil
 import subprocess
-import typing
 
 import configparser
 

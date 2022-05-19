@@ -2,7 +2,6 @@ import dataclasses
 import logging
 import os
 import shutil
-import typing
 
 
 @dataclasses.dataclass
