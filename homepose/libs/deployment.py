@@ -18,7 +18,7 @@ import homepose.libs.utils
 @dataclasses.dataclass
 class HomeposeDeployment():
     enviroment: homepose.libs.environment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.environment.HomeposeDeployEnvironment)
-    __logger: logging.Logger = dataclasses.field(init=False)
+    __logger: homepose.libs.utils.HomeposeLogger = dataclasses.field(init=False)
     __instance: docker.client.DockerClient = dataclasses.field(default_factory=docker.from_env)
     __current_service_name: str = dataclasses.field(init=False, default='')
     __service_compose_path: str = dataclasses.field(init=False, default='')
