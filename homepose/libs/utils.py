@@ -56,7 +56,7 @@ class HomeposeLogger():
         self.__logger.log(level, message)
 
 
-def fill_templates(templates_path: str, generated_path: str) -> None
+def fill_templates(templates_path: str, generated_path: str) -> None:
     for subfolder in os.listdir(templates_path):
         for filename in os.listdir(f'{templates_path}/{subfolder}'):
             with open(f'{templates_path}/{subfolder}/{filename}', 'r') as template:
