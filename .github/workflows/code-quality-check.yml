@@ -22,5 +22,6 @@ jobs:
     - name: Checking with pylint
       run: pylint $(git ls-files '*.py')
     - name: Checking typing with mypy
-      run: pip install types-setuptools 
-      run: mypy --namespace-packages --explicit-package-bases $(git ls-files '*.py')
+      run: |
+        pip install types-setuptools
+        mypy --namespace-packages --explicit-package-bases $(git ls-files '*.py')
