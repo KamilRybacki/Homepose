@@ -10,10 +10,10 @@ class HomeposeLogger():
     formatting: str = dataclasses.field(default=' %(name)s :: %(levelname)s :: %(message)s')
     level: int = dataclasses.field(default=logging.INFO)
     name: str = dataclasses.field(default='HOMEPOSE-SETUP')
-    _logger: typing.Optional[logging.Logger] = dataclasses.field(init=False, default=None)
+    _logger: logging.Logger = dataclasses.field(init=False)
     _instance: dict = dataclasses.field(init=False, default_factory=dict)
 
-    def __new__(cls, *args, **kwargs) -> 'HomeposeLogger':
+    def __new__(cls, *args, **kwargs) -> logging.Logger:
         if not hasattr(cls, '_HomeposeLogger__instance'):
             cls._instance = {}
         if cls not in cls._instance:

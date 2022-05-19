@@ -19,7 +19,7 @@ import homepose.libs.utils
 @dataclasses.dataclass
 class HomeposeDeployment():
     enviroment: homepose.libs.environment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.environment.HomeposeDeployEnvironment)
-    __logger: typing.Optional[str] = dataclasses.field(init=False, default=None)
+    __logger: logging.Logger = dataclasses.field(init=False)
     __instance: docker.client.DockerClient = dataclasses.field(default_factory=docker.from_env)
     __current_service_name: str = dataclasses.field(init=False, default='')
     __service_compose_path: str = dataclasses.field(init=False, default='')
@@ -35,25 +35,26 @@ class HomeposeDeployment():
             network.remove()
         self.__instance.networks.create(network_name)
 
-    def compose_services(self, services_list: list, logger: logging.Logger = None) -> None:
-        self.__logger = logger or logging.Logger('COMPOSE')
+    def compose_services(self, services_list: list, logger: logging.Logger = logging.Logger('COMPOSE')) -> None:
+        self.__logger = logger
         homepose.libs.utils.fill_templates(
             self.enviroment["TEMPLATES_FOLDER"],
             self.enviroment["GENERATED_FOLDER"]
         )
+        self.remove_current_containers()
+        network_name = self.enviroment["HOMEPOSE_DOCKER_NETWORK"]
+        network = self.__instance.networks.get(network_name)
+        network.remove()
         for service_name in services_list:
             logger.info(f' Enabling service: {service_name}... ')
             self.__current_service_name = service_name
             self.__service_compose_path = f'{self.enviroment["COMPOSE_FILES_FOLDER"]}/{service_name}'
             self.run_bash_script(f'{self.__service_compose_path}/pre_init.sh')
-            if self.compose_up():
-                self.remove_current_containers()
-                network_name = self.enviroment["HOMEPOSE_DOCKER_NETWORK"]
-                network = self.__instance.networks.get(network_name)
-                network.remove()
+            try:
+                self.compose_up()
+            except:
                 raise shutil.ExecError(f'Deployment of {service_name} failed!')
             self.run_bash_script(f'{self.__service_compose_path}/post_init.sh')
-        self.__logger = None
 
     def run_bash_script(self, script_path: str) -> None:
         if os.path.exists(script_path):

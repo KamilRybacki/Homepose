@@ -16,7 +16,7 @@ class HomeposeDeployEnvironment():
     www_data_userid: int = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_USERID)
     www_data_groupid: int = dataclasses.field(default=homepose.libs.vars.DEFAULT_WWW_DATA_GROUPID)
 
-    config: typing.Optional[dict] = dataclasses.field(init=False, default=None)
+    config: dict = dataclasses.field(init=False, default_factory=dict)
     __instance: dict = dataclasses.field(init=False, default_factory=dict)
 
     def __new__(cls, *args, **kwargs) -> 'HomeposeDeployEnvironment':
@@ -39,7 +39,7 @@ class HomeposeDeployEnvironment():
         config_file_contents = configparser.ConfigParser(
             interpolation=configparser.ExtendedInterpolation()
         )
-        config_file_contents.optionxform = str
+        config_file_contents.optionxform = str  # type: ignore
         config_file_contents.read(config_file_path)
         denested_config = {}
         for section in config_file_contents.sections():
@@ -68,9 +68,9 @@ class HomeposeDeployEnvironment():
                 f'groupadd -g {self.www_data_groupid} {self.www_data_username}',
                 f'usermod -a -G {self.www_data_username} {self.www_data_username}'
             ]:
-                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R1732
-            os.environ['WWW_DATA_UID'] = self.www_data_userid
-            os.environ['WWW_DATA_GID'] = self.www_data_groupid
+                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R1732  # type: ignore
+            os.environ['WWW_DATA_UID'] = str(self.www_data_userid)
+            os.environ['WWW_DATA_GID'] = str(self.www_data_groupid)
 
     @staticmethod
     def export_secret(secret_name: str) -> None:
