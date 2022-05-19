@@ -130,7 +130,7 @@ class HomeposeDeployment():
         docker_compose_file_path = f'{self.__service_compose_path}/docker-compose.yml'
         try:
             _ = subprocess.run(
-                f'docker-compose -f {docker_compose_file_path} down', 
+                f'docker-compose -f {docker_compose_file_path} down',
                 shell=True,
                 check=True,
                 capture_output=True

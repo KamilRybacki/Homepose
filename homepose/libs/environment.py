@@ -55,7 +55,7 @@ class HomeposeDeployEnvironment():
         for service in self.config['ENABLED_SERVICES'].split(','):
             self.update_env_var(f'{service.upper()}_COMPOSE_FILES_FOLDER',f'{self.config["COMPOSE_FILES_FOLDER"]}/{service}')
 
-    @staticmethod	
+    @staticmethod
     def update_env_var(key: str, value: str) -> None:
         if key not in os.environ:
             os.environ.setdefault(key, value)
@@ -72,7 +72,8 @@ class HomeposeDeployEnvironment():
             os.environ['WWW_DATA_UID'] = self.www_data_userid
             os.environ['WWW_DATA_GID'] = self.www_data_groupid
 
-    def export_secret(self, secret_name: str) -> None:
+    @staticmethod
+    def export_secret(secret_name: str) -> None:
         secret = os.popen('openssl rand -hex 16').read().rstrip()
         os.environ[f'{secret_name.upper()}_SECRET'] = secret
 
