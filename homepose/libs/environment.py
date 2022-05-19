@@ -61,14 +61,14 @@ class HomeposeDeployEnvironment():
             os.environ.setdefault(key, value)
 
     def setup_www_data_user(self) -> None:
-        with open(os.devnull, 'w') as file_pointer:
+        with open(os.devnull, 'w', encoding='utf-8') as file_pointer:
             popen_kwargs = {'stdout': file_pointer, 'stderr': file_pointer, 'shell': True}
             for command in [
                 f'useradd -u {self.www_data_userid} {self.www_data_username}',
                 f'groupadd -g {self.www_data_groupid} {self.www_data_username}',
                 f'usermod -a -G {self.www_data_username} {self.www_data_username}'
             ]:
-                subprocess.Popen(command, **popen_kwargs)
+                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R173
             os.environ['WWW_DATA_UID'] = self.www_data_userid
             os.environ['WWW_DATA_GID'] = self.www_data_groupid
 

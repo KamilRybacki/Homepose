@@ -59,9 +59,9 @@ class HomeposeLogger():
 def fill_templates(templates_path: str, generated_path: str) -> None:
     for subfolder in os.listdir(templates_path):
         for filename in os.listdir(f'{templates_path}/{subfolder}'):
-            with open(f'{templates_path}/{subfolder}/{filename}', 'r') as template:
+            with open(f'{templates_path}/{subfolder}/{filename}', 'r', encoding='utf8') as template:
                 filled_template = fill_template(template.read())
-                with open(f'{generated_path}/{subfolder}/{filename}', 'w') as target_file:
+                with open(f'{generated_path}/{subfolder}/{filename}', 'w', encoding='utf-8') as target_file:
                     target_file.truncate(0)
                     target_file.write(filled_template)
             shutil.chown(f'{generated_path}/{subfolder}/{filename}', user=os.environ['SUDO_USER'], group=os.environ['SUDO_USER'])
@@ -76,5 +76,5 @@ def fill_template(template_contents: str) -> str:
 
 
 def generate_dockerfile(template_path: str) -> str:
-    with open(template_path, 'r') as dockerfile_template:
+    with open(template_path, 'r', encoding='utf-8') as dockerfile_template:
         return fill_template(dockerfile_template.read())

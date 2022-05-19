@@ -61,22 +61,17 @@ class HomeposeDeployment():
 
     @staticmethod
     def run_with_popen(command: str, logpath: str) -> int:
-        process = subprocess.Popen(
-                    command,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-        process_output = [
-            line.decode()
-            for line in process.communicate()
-            if line.decode()
-        ]
-        if process.poll():
-            return 1
-        if process_output:
-            with open(logpath, 'w') as script_log:
-                script_log.writelines(process_output)
+        with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+            process_output = [
+                line.decode()
+                for line in process.communicate()
+                if line.decode()
+            ]
+            if process.poll():
+                return 1
+            if process_output:
+                with open(logpath, 'w', encoding='utf-8') as script_log:
+                    script_log.writelines(process_output)
         return 0
 
     def compose_up(self, ignore_dockerfile: bool = False) -> None:
@@ -90,7 +85,7 @@ class HomeposeDeployment():
         if os.path.exists(dockerfile_template_path):
             dockerfile_target_path = f'{self.__service_compose_path}/Dockerfile'
             filled_dockerfile_template = homepose.libs.utils.generate_dockerfile(dockerfile_template_path)
-            with open(dockerfile_target_path, 'w') as target_dockerfile:
+            with open(dockerfile_target_path, 'w', encoding='utf-8') as target_dockerfile:
                 target_dockerfile.truncate(0)
                 target_dockerfile.write(filled_dockerfile_template)
         if os.path.exists(f'{self.enviroment["COMPOSE_FILES_FOLDER"]}/{self.__current_service_name}/Dockerfile'):
@@ -116,15 +111,11 @@ class HomeposeDeployment():
 
     @staticmethod
     def compose_with_file(filepath: str) -> None:
-        compose_process = subprocess.Popen(
-            f'docker-compose -f {filepath} up -d',
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        compose_process_output = [line.decode() for line in compose_process.communicate()]
-        if compose_process.poll():
-            raise shutil.ExecError(f'Deployment of service failed: {compose_process_output}')
+        compose_command = f'docker-compose -f {filepath} up -d'
+        with subprocess.Popen(compose_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as compose_process:
+            compose_process_output = [line.decode() for line in compose_process.communicate()]
+            if compose_process.poll():
+                raise shutil.ExecError(f'Deployment of service failed: {compose_process_output}')
 
     def compose_down(self) -> None:
         docker_compose_file_path = f'{self.__service_compose_path}/docker-compose.yml'

@@ -13,7 +13,6 @@ class HomeposeNetworking():
 
     __additional_gateways: dict = dataclasses.field(init=False, default_factory=dict)
     __hosts_file_contents: str = dataclasses.field(init=False, default='')
-    __reverse_proxy_location_template: str = dataclasses.field(init=False, default='')
 
     def __post_init__(self):  # sourcery skip: remove-redundant-if
         for line in os.popen('ip a show ${HOMEPOSE_ETHERNET_INTERFACE}').readlines():
@@ -22,10 +21,8 @@ class HomeposeNetworking():
                 os.environ.setdefault('HOMEPOSE_IP_ADDRESS', self.host_ip_address)
                 os.environ.setdefault('HOSTNAME', os.popen('hostname').read().rstrip())
                 break
-        with open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'r') as current_hosts_file:
+        with open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'r', encoding='utf8') as current_hosts_file:
             self.__hosts_file_contents = current_hosts_file.read()
-        with open(f'{self.enviroment["TEMPLATES_FOLDER"]}/configs/rproxy.location', 'r') as rproxy_location_template:
-            self.__reverse_proxy_location_template = rproxy_location_template.read()
 
     def configure_dns(self):
         dnsmasq_install_result = os.popen('yes | apt-get install avahi-daemon').readlines()
