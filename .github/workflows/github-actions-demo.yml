@@ -5,6 +5,7 @@ jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
+    - run: pip install .
     - uses: actions/checkout@v1
     - uses: ricardochaves/python-lint@v1.4.0
       with:
@@ -15,7 +16,7 @@ jobs:
         use-black: false
         use-mypy: true
         use-isort: false
-        extra-pylint-options: ""
+        extra-pylint-options: "--disable=C0301,C0114"
         extra-pycodestyle-options: ""
         extra-flake8-options: ""
         extra-black-options: ""

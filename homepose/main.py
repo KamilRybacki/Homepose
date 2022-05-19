@@ -40,7 +40,7 @@ class HomeposeInstance():
         self.logging.info(' Decomposing running services')
         self.deployment.remove_current_containers()
         self.logging.info(' Running containers purged!')
-    
+
     def restart(self) -> None:
         self.logging.info('Stopping all running Docker services')
         self.stop()

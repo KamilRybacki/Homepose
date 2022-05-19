@@ -2,14 +2,13 @@
 
 import contextlib
 import dataclasses
-import docker
-import dotenv
 import logging
 import os
 import shutil
 import subprocess
 import typing
 
+import dotenv
 import docker
 
 import homepose.libs.vars
@@ -52,23 +51,24 @@ class HomeposeDeployment():
                 network_name = self.enviroment["HOMEPOSE_DOCKER_NETWORK"]
                 network = self.__instance.networks.get(network_name)
                 network.remove()
-                raise shutil.ExecError(f'Deployment of {service_name} failed!') 
+                raise shutil.ExecError(f'Deployment of {service_name} failed!')
             self.run_bash_script(f'{self.__service_compose_path}/post_init.sh')
         self.__logger = None
 
     def run_bash_script(self, script_path: str) -> None:
         if os.path.exists(script_path):
             self.run_with_popen(f'bash {script_path}', f'{script_path}.log')
-    
-    def run_with_popen(self, command: str, logpath: str) -> int:
+
+    @staticmethod
+    def run_with_popen(command: str, logpath: str) -> int:
         process = subprocess.Popen(
-                    command, 
+                    command,
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE
                 )
         process_output = [
-            line.decode() 
+            line.decode()
             for line in process.communicate()
             if line.decode()
         ]
@@ -81,13 +81,14 @@ class HomeposeDeployment():
 
     def compose_up(self, ignore_dockerfile: bool = False) -> None:
         self.source_additional_env_vars()
-        self.build_docker_image()
+        if not ignore_dockerfile:
+            self.build_docker_image()
         self.compose_currently_selected_service()
 
     def build_docker_image(self) -> None:
         dockerfile_template_path = f'{self.enviroment["TEMPLATES_FOLDER"]}/dockerfiles/{self.__current_service_name}'
         if os.path.exists(dockerfile_template_path):
-            dockerfile_target_path = f'{self.__service_compose_path}/Dockerfile' 
+            dockerfile_target_path = f'{self.__service_compose_path}/Dockerfile'
             filled_dockerfile_template = homepose.libs.utils.generate_dockerfile(dockerfile_template_path)
             with open(dockerfile_target_path, 'w') as target_dockerfile:
                 target_dockerfile.truncate(0)
@@ -96,7 +97,7 @@ class HomeposeDeployment():
             self.__logger.info(f'  Found custom Dockerfile for {self.__current_service_name}!')
             self.__logger.info('  Building Docker image ...')
             if self.run_with_popen(
-                f'docker build -t custom-{self.__current_service_name} {self.__service_compose_path}', 
+                f'docker build -t custom-{self.__current_service_name} {self.__service_compose_path}',
                 f'{self.enviroment["COMPOSE_FILES_FOLDER"]}/{self.__current_service_name}/docker_build.log'
             ):
                 raise shutil.ExecError('Docker image build failed!')
@@ -112,11 +113,11 @@ class HomeposeDeployment():
             self.__logger.info(f'  Composing Docker container for {self.__current_service_name}!')
         docker_compose_file_path = f'{self.__service_compose_path}/docker-compose.yml'
         self.compose_with_file(docker_compose_file_path)
-    
+
     @staticmethod
     def compose_with_file(filepath: str) -> None:
         compose_process = subprocess.Popen(
-            f'docker-compose -f {filepath} up -d', 
+            f'docker-compose -f {filepath} up -d',
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
@@ -128,11 +129,11 @@ class HomeposeDeployment():
     def compose_down(self) -> None:
         docker_compose_file_path = f'{self.__service_compose_path}/docker-compose.yml'
         try:
-            process = subprocess.run(
+            _ = subprocess.run(
                 f'docker-compose -f {docker_compose_file_path} down', 
                 shell=True,
                 check=True,
                 capture_output=True
             )
-        except subprocess.CalledProcessError as e:
-            raise shutil.ExecError('Decomposition halted!') from e
+        except subprocess.CalledProcessError as encountered_exception:
+            raise shutil.ExecError('Decomposition halted!') from encountered_exception

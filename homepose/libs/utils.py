@@ -19,23 +19,23 @@ class HomeposeLogger():
         if cls not in cls.__instance:
             logging.basicConfig()
             new_instance = super(HomeposeLogger, cls).__new__(cls, *args, **kwargs)
-            new_instance.__logger = cls.__init_logger()
+            new_instance.__logger = cls._init_logger()
             cls.__instance[cls] = new_instance
         return cls.__instance[cls]
 
     @classmethod
-    def __init_logger(cls) -> 'HomeposeLogger':
+    def _init_logger(cls) -> 'HomeposeLogger':
         logger = logging.getLogger(cls.name)
         logger.setLevel(cls.level)
         logger.propagate = False
 
         console_handler = logging.StreamHandler()
         console_handler.setLevel(cls.level)
-        
+
         setup_log_formatter = logging.Formatter(fmt=cls.formatting)
         console_handler.setFormatter(setup_log_formatter)
 
-        if (logger.hasHandlers()):
+        if logger.hasHandlers():
             logger.handlers.clear()
         logger.addHandler(console_handler)
         return logger
@@ -45,7 +45,7 @@ class HomeposeLogger():
 
     def error(self, message: str) -> None:
         self.log(message, logging.ERROR)
-    
+
     def warning(self, message: str) -> None:
         self.log(message, logging.WARNING)
 
@@ -71,7 +71,7 @@ def fill_template(template_contents: str) -> str:
     for variable_name, variable_value in os.environ.items():
         entry_template_marker = f'[{variable_name}]'
         if entry_template_marker in template_contents:
-            template_contents = template_contents.replace(entry_template_marker, variable_value) 
+            template_contents = template_contents.replace(entry_template_marker, variable_value)
     return template_contents
 
 
