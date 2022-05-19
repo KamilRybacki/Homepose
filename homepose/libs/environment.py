@@ -53,7 +53,7 @@ class HomeposeDeployEnvironment():
         for setting_name, setting in self.config.items():
             self.update_env_var(setting_name, setting)
         for service in self.config['ENABLED_SERVICES'].split(','):
-            self.update_env_var(f'{service.upper()}_COMPOSE_FILES_FOLDER',f'{self.config["COMPOSE_FILES_FOLDER"]}/{service}')
+            self.update_env_var(f'{service.upper()}_COMPOSE_FILES_FOLDER', f'{self.config["COMPOSE_FILES_FOLDER"]}/{service}')
 
     @staticmethod
     def update_env_var(key: str, value: str) -> None:
