@@ -5,7 +5,7 @@ on:
   - '**.py'
 
 jobs:
-  python-linting:
+  linting:
     runs-on: ubuntu-latest
     steps:
     - name: Checking out
