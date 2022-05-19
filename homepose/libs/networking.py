@@ -49,6 +49,6 @@ class HomeposeNetworking():
             if entry not in self.__hosts_file_contents:
                 new_hosts_file_contents += entry
 
-        with open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'w') as current_hosts_file:
+        with open(homepose.libs.vars.HOSTS_TARGET_FILE_PATH, 'w', encoding='utf-8') as current_hosts_file:
             current_hosts_file.truncate(0)
             current_hosts_file.write(new_hosts_file_contents)

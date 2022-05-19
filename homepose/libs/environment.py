@@ -68,7 +68,7 @@ class HomeposeDeployEnvironment():
                 f'groupadd -g {self.www_data_groupid} {self.www_data_username}',
                 f'usermod -a -G {self.www_data_username} {self.www_data_username}'
             ]:
-                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R173
+                subprocess.Popen(command, **popen_kwargs)  # pylint: disable=R1732
             os.environ['WWW_DATA_UID'] = self.www_data_userid
             os.environ['WWW_DATA_GID'] = self.www_data_groupid
 
