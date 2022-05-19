@@ -7,6 +7,7 @@ import homepose.libs.environment
 import homepose.libs.networking
 import homepose.libs.utils
 
+
 @dataclasses.dataclass
 class HomeposeInstance():
     enviroment: homepose.libs.environment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.environment.HomeposeDeployEnvironment)

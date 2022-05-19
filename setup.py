@@ -1,9 +1,9 @@
 import setuptools
 
-MODULE_NAME='homepose'
+MODULE_NAME = 'homepose'
 
 packages_list = [MODULE_NAME] + [
-    f'{MODULE_NAME}.{package_name}' 
+    f'{MODULE_NAME}.{package_name}'
     for package_name in setuptools.find_namespace_packages(where=MODULE_NAME)
 ]
 
