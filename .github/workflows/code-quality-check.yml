@@ -1,8 +1,5 @@
 name: Code linting 
-on:
- push:
-  paths:
-  - '**.py'
+on: [push]
 
 jobs:
   linting:
