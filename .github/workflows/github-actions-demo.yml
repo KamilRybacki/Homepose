@@ -10,16 +10,17 @@ jobs:
       with:
         python-version: '3.9'
     - run: pip install .
+    - run: export PYTHONPATH='$PYTHONPATH:.'
     - uses: ricardochaves/python-lint@v1.4.0
       with:
-        python-root-list: "homepose"
+        python-root-list: "homepose homepose.lib"
         use-pylint: true
         use-pycodestyle: false
         use-flake8: true
         use-black: false
         use-mypy: true
         use-isort: false
-        extra-pylint-options: "--disable=C0301,C0114"
+        extra-pylint-options: ""
         extra-pycodestyle-options: ""
         extra-flake8-options: ""
         extra-black-options: ""
