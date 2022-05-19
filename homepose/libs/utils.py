@@ -10,18 +10,18 @@ class HomeposeLogger():
     formatting: str = dataclasses.field(default=' %(name)s :: %(levelname)s :: %(message)s')
     level: int = dataclasses.field(default=logging.INFO)
     name: str = dataclasses.field(default='HOMEPOSE-SETUP')
-    __logger: typing.Optional[logging.Logger] = dataclasses.field(init=False, default=None)
-    __instance: dict = dataclasses.field(init=False, default_factory=dict)
+    _logger: typing.Optional[logging.Logger] = dataclasses.field(init=False, default=None)
+    _instance: dict = dataclasses.field(init=False, default_factory=dict)
 
     def __new__(cls, *args, **kwargs) -> 'HomeposeLogger':
         if not hasattr(cls, '_HomeposeLogger__instance'):
-            cls.__instance = {}
-        if cls not in cls.__instance:
+            cls._instance = {}
+        if cls not in cls._instance:
             logging.basicConfig()
             new_instance = super(HomeposeLogger, cls).__new__(cls, *args, **kwargs)
-            new_instance.__logger = cls._init_logger()
-            cls.__instance[cls] = new_instance
-        return cls.__instance[cls]
+            new_instance._logger = cls._init_logger()
+            cls._instance[cls] = new_instance
+        return cls._instance[cls]
 
     @classmethod
     def _init_logger(cls) -> 'HomeposeLogger':
@@ -53,7 +53,7 @@ class HomeposeLogger():
         self.log(message, logging.DEBUG)
 
     def log(self, message: str, level: int) -> None:
-        self.__logger.log(level, message)
+        self._logger.log(level, message)
 
 
 def fill_templates(templates_path: str, generated_path: str) -> None:

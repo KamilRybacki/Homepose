@@ -8,11 +8,6 @@ import configparser
 
 import homepose.libs.vars
 
-class NonSudoCall(Exception):
-    default_message = 
-    def __init__(self, msg=default_message, *args, **kwargs):
-        super().__init__(msg, *args, **kwargs)
-
 
 @dataclasses.dataclass
 class HomeposeDeployEnvironment():

@@ -3,13 +3,13 @@
 import dataclasses
 
 import homepose.libs.deployment
-import homepose.libs.enviroment
+import homepose.libs.environment
 import homepose.libs.networking
 import homepose.libs.utils
 
 @dataclasses.dataclass
 class HomeposeInstance():
-    enviroment: homepose.libs.enviroment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnvironment)
+    enviroment: homepose.libs.environment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.environment.HomeposeDeployEnvironment)
     networking: homepose.libs.networking.HomeposeNetworking = dataclasses.field(init=False, default_factory=homepose.libs.networking.HomeposeNetworking)
     deployment: homepose.libs.deployment.HomeposeDeployment = dataclasses.field(init=False, default_factory=homepose.libs.deployment.HomeposeDeployment)
     logging: homepose.libs.utils.HomeposeLogger = dataclasses.field(init=False)

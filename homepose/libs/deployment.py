@@ -12,13 +12,13 @@ import dotenv
 import docker
 
 import homepose.libs.vars
-import homepose.libs.enviroment
+import homepose.libs.environment
 import homepose.libs.utils
 
 
 @dataclasses.dataclass
 class HomeposeDeployment():
-    enviroment: homepose.libs.enviroment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnvironment)
+    enviroment: homepose.libs.environment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.environment.HomeposeDeployEnvironment)
     __logger: typing.Optional[str] = dataclasses.field(init=False, default=None)
     __instance: docker.client.DockerClient = dataclasses.field(default_factory=docker.from_env)
     __current_service_name: str = dataclasses.field(init=False, default='')

@@ -2,12 +2,12 @@ import dataclasses
 import os
 import shutil
 
-import homepose.libs.enviroment
+import homepose.libs.environment
 import homepose.libs.utils
 
 @dataclasses.dataclass
 class HomeposeNetworking():
-    enviroment: homepose.libs.enviroment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.enviroment.HomeposeDeployEnvironment)
+    enviroment: homepose.libs.environment.HomeposeDeployEnvironment = dataclasses.field(init=False, default_factory=homepose.libs.environment.HomeposeDeployEnvironment)
     host_ip_address: str = dataclasses.field(init=False, default='')
 
     __additional_gateways: dict = dataclasses.field(init=False, default_factory=dict)
