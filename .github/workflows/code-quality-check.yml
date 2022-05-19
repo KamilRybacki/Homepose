@@ -22,4 +22,4 @@ jobs:
     - name: Checking with pylint
       run: pylint $(git ls-files '*.py')
     - name: Checking typing with mypy
-      run: mypy $(git ls-files '*.py')
+      run: mypy --namespace-packages --explicit-package-bases $(git ls-files '*.py')
