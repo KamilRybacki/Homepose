@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checking out
-    - uses: actions/checkout@v1
+      uses: actions/checkout@v1
     - name: Setting up Python3
-    - uses: actions/setup-python@v3
+      uses: actions/setup-python@v3
       with:
         python-version: '3.9'
         architecture: 'x64'
